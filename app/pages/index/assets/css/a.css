@@ -1,0 +1,12 @@
+h2{
+	color:red;
+	width:50px;
+	height:50px;
+	background:url(../img/image008.jpg);
+}
+h3{
+	color:red;
+	width:50px;
+	height:50px;
+	background:url(/static/img/image008.jpg);
+}
