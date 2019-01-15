@@ -1,0 +1,2 @@
+# vue
+multiple entry
