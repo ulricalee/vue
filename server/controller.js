@@ -50,7 +50,6 @@ module.exports = function(router){
 	//       return ctx.login({id: 1, username: 'admin', password: '123456'})
 	//     })(ctx)
 	// })
-
 	router.get('/api/*', async (ctx,next) => {
 
 		if(ctx.session.user && ctx.session.user === ctx.cookies.get('user')){
@@ -73,6 +72,12 @@ module.exports = function(router){
 	  	ctx.body = fs.createReadStream('../build/index.html')
 		
 	})
+	//app detail 首页
+	router.get('detail', '/detail', async ctx => {
+		ctx.response.type = 'text/html; charset=UTF-8'
+	  	ctx.body = fs.createReadStream('../build/detail.html')
+		
+	})
 
 
 	router.get('/act/aboutUser', async ctx => {
@@ -86,6 +91,7 @@ module.exports = function(router){
 		if(	!_type || !_account || !_password ){
 			ctx.body = {
 	  			result:'error',
+	  			code:'A0001',
 	  			msg:`Request parameter missing ${!_type ? 'utype' : !_account ? 'account' : !_password ? 'password' : ''}.`
 	  		}
 	  		return false
@@ -102,6 +108,7 @@ module.exports = function(router){
 		  		if(_type === 'register'){
 		  			ctx.body = {
 			  			result:'error',
+			  			code:'A0002',
 			  			msg:'Account already exists.'
 			  		}
 		  		}
@@ -116,6 +123,7 @@ module.exports = function(router){
 					if(clientPwd === user.password){
 						ctx.body = {
 				  			result:'success',
+				  			code:'A0000',
 				  			msg:'Login successfully.'
 				  		}
 				  		ctx.session.user = _account
@@ -129,6 +137,7 @@ module.exports = function(router){
 					}else{
 						ctx.body = {
 				  			result:'error',
+				  			code:'A0001',
 				  			msg:'Account password error.'
 				  		}
 					}
@@ -158,6 +167,7 @@ module.exports = function(router){
 
 			  		ctx.body = {
 			  			result:'success',
+			  			code:'A0000',
 			  			msg:'Create account successfully.'
 			  		}
 
@@ -165,6 +175,7 @@ module.exports = function(router){
 
 		  			ctx.body = {
 			  			result:'error',
+			  			code:'A0001',
 			  			msg:'Account does not exist.'
 			  		}
 

@@ -35,3 +35,8 @@ export default {
 	}
 }
 </script>
+<style scoped>
+body{
+	background:url('../assets/img/logo.png')
+}
+</style>

@@ -55,7 +55,7 @@ var App = (function(){
 
         htmls.push(
             new HtmlWebpackPlugin({
-                chunks:[ _appname ],
+                chunks:[_appname],
                 template: path.join(filepath, `${_appname}.html`),
                 filename: `${_appname}.html`, //输出的文件名
                 hash: true
@@ -65,6 +65,7 @@ var App = (function(){
 
 
     })
+    console.log(entry)
     return {
         entry,
         htmls
@@ -80,19 +81,29 @@ const config = {
         filename:'./public/js/[name].js',
         path:path.join(__dirname, 'build')
     },
+
     optimization: {
         splitChunks: {
-            chunks: 'all',
-            minChunks: 3,
+             chunks: "async",
+             minSize: 30000,
+             minChunks: 1,
+             name: true,
+            //chunks: 'all',
+            //name: (m, chunks, cacheGroup) => `chunk-${cacheGroup}`,
+            // minChunks: 3,
             cacheGroups: {
+        default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true,
+        },
+        // 首先: 打包node_modules中的文件
                 vendor: {
-                    test: /node_modules/,
-                    chunks: 'initial',
-                    name: 'vendor',
-                    priority: -10,
-                    enforce: true
+                  name: "vendor",
+                  test: /[\\/]node_modules[\\/]/,
+                  // chunks: "all",
+                  priority: -10
                 }
-
             }
         }
     },
@@ -106,29 +117,57 @@ const config = {
     },
     module: {
         rules: [
-            {
-                test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                     fallback: {
-                         loader: 'style-loader',
-                         options: {
-                             singleton: true
-                         }
-                     },
-                     use: [
-                         {
-                             loader: 'css-loader',
-                             options: {
-                                 minimize: true
-                             }
-                         }  
-                     ]
-                })
-            },
+            // {
+            //     test: /\.css$/,
+            //     use: ExtractTextPlugin.extract({
+            //          fallback: {
+            //              loader: 'style-loader',
+            //              options: {
+            //                  singleton: true
+            //              }
+            //          },
+            //          use: [
+            //              {
+            //                  loader: 'css-loader',
+            //                  options: {
+            //                      minimize: true
+            //                  }
+            //              }
+
+            //          ]
+            //     })
+            // },
             {
                 test: /\.scss$/,
                 use: [ 'style-loader', 'css-loader', 'sass-loader']
             },
+            {
+                test: /\.css$/,
+                use: [ 'style-loader', 'css-loader']
+            },
+            // {
+            //     test: /\.scss$/,
+            //     use: ExtractTextPlugin.extract({
+            //       // 注意 1
+            //       fallback: {
+            //         loader: "style-loader"
+            //       },
+            //       use: [
+            //         {
+            //           loader: "css-loader",
+            //           options: {
+            //             minimize: true
+            //           }
+            //         },
+            //         {
+            //           loader: "sass-loader"
+            //         },
+            //         // {
+            //         //   loader: "style-loader"
+            //         // }
+            //       ]
+            //     })
+            // },
             {
                 test: /\.js$/,
                 use: [
@@ -165,9 +204,10 @@ const config = {
     },
     plugins:[
         new VueLoaderPlugin(),
-        new ExtractTextPlugin({
-            filename: '/public/css/[name].css',
-        }),
+        // new ExtractTextPlugin({
+        //     filename: '/public/css/[name].css',
+        //     allChunks: false
+        // }),
         ...App.htmls
     ]
 }

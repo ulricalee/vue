@@ -1,24 +1,30 @@
 <template>
 	<div class="login">
-		<input type="text" placeholder="account" v-model="account">
-		<input type="password" placeholder="password" v-model="password">
-		<button type="button" @click="signIn">sign in</button>
-		<button type="button" @click="signUp">sign up</button>
-		<p :class="color">{{msg}}</p>
+		<van-cell-group>
+		  	<van-field v-model="account" placeholder="Account" />
+		  	<van-field type="password" v-model="password" placeholder="Password"/>
+		</van-cell-group>
+		<van-button size="large" class="in" @click="signIn">Sign In</van-button>
+		<p class="alc">New to here? <span @click="goregister">Create an account</span></p>
 	</div>
 </template>
 <script>
 import Ajax from '@app/api/ajax'
 import axios from 'axios'
+
+
+
 export default {
 	name: 'login',
+	// compontents:{
+	// 	vanfield
+	// },
 	data(){
 		return {
 			account:'',
 			password:'',
-			msg:'',
 			utype:'',
-			color:''
+			tipSwitch:false
 		}
 	},
 	methods:{
@@ -31,15 +37,14 @@ export default {
 				}
 			}).then(response => {
 				let _data = response.data
-				if(_data && _data.result === 'success'){
-					this.color = 'suc'
+				if(_data && _data.code === 'A0000'){
 					if(this.utype === 'login'){
 						this.$router.push({ name: 'life'})
 					}
 				}else{
-					this.color = 'err'
+					this.$notify('Incorrect account or password.');
 				}
-				this.msg =  _data && _data.msg ? _data.msg : ''
+				
 				
 			})
 			.catch(function (error) {
@@ -50,9 +55,8 @@ export default {
 			this.utype = 'login'
 			this.req()
 		},
-		signUp(){
-			this.utype = 'register'
-			this.req()
+		goregister(){
+			this.$router.push({ name: 'life', params: {}})
 		}
 	},
 	created(){
@@ -60,11 +64,30 @@ export default {
 	}
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
+	.login{
+		position:absolute;
+		top:50%;
+		left:0;
+		width:100%;
+		margin-top:-200px;
+	}
+	.in{
+		background-color:cadetblue;
+		color:#fff;
+		margin-top:25px;
+	}
 	.suc{
 		color:green;
 	}
 	.err{
 		color:#ff0000;
+	}
+	.alc{
+		text-align:center;
+		font-size:12px;
+	}
+	.alc span{
+		color:navy;
 	}
 </style>

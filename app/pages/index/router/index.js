@@ -1,5 +1,6 @@
 // import login from '../components/login'
-import life from '../components/life'
+// import life from '../components/life'
+const life = () => import('../components/life')
 const login = () => import('../components/login')
 const routes = [
   	{

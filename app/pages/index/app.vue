@@ -1,11 +1,16 @@
 <template>
   <div>
-      <router-view></router-view>
-  	<img src="./assets/img/image008.jpg" width="30" alt="">
+    <!-- 动态绑定路由动画，根据路由状态的不同绑定不同的路由动画分别为  ：‘slide-left’  和 'slide-right' -->
+    <transition :name="transitionName">
+      <navigation>
+      <router-view class="router"></router-view>
+      </navigation>
+    </transition>
+  	<!-- <img src="./assets/img/image008.jpg" width="30" alt="">
   	<div class="logo"></div>
   	<div class="bg"></div>
   	<div class="bg2"></div>
-    <h1 class="xixi">vue</h1>
+    <h1 class="xixi">vue</h1> -->
   </div>
 </template>
 
@@ -43,28 +48,57 @@ class A {
 var a = new A
 A.d()
 export default {
-    name: 'App'
+    name: 'App',
+    data () {
+        return {
+          transitionName: 'slide-left'
+        }
+    },
+    created () {
+      // bind event
+      this.$navigation.on('forward', (to, from) => {
+        this.transitionName = 'slide-left'
+      })
+      this.$navigation.on('back', (to, from) => {
+        this.transitionName = 'slide-right'
+      })
+      this.$navigation.on('replace', (to, from) => {
+        console.log('replace to', to, 'from ', from)
+      })
+      this.$navigation.on('refresh', (to, from) => {
+        console.log('refresh to', to, 'from ', from)
+      })
+      this.$navigation.on('reset', () => {
+        console.log('reset')
+      })
+    }
 }
 </script>
 
-<style scoped>
-.xixi {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+<style>
+body {
+  font-family: Helvetica Neue,Helvetica,Microsoft Yahei,STHeiTi,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
-.bg{
-	width:50px;
-	height:50px;
-	background:url('./assets/img/image008.jpg') no-repeat;
+.router {
+  position: absolute;
+  width: 100%;
+  transition: all .8s ease;
+  transform: translateZ(0);
 }
-.logo{
-	width:50px;
-	height:50px;
-	background:url('./assets/img/logo.png') no-repeat;
-	background-size:100% 100%;
+.slide-left-enter,
+.slide-right-leave-active {
+  opacity: 0;
+  -webkit-transform: translate(100%, 0);
+  transform: translate(100%, 0);
+}
+.slide-left-leave-active,
+.slide-right-enter {
+  opacity: 0;
+  -webkit-transform: translate(-100%, 0);
+  transform: translate(-100% 0);
 }
 </style>
