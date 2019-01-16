@@ -2,6 +2,7 @@
 // import life from '../components/life'
 const life = () => import('../components/life')
 const login = () => import('../components/login')
+const register = () => import('../components/register')
 const routes = [
   	{
   		path: '/login',
@@ -12,7 +13,12 @@ const routes = [
   		path:'/life',
   		name: 'life',
   		component: life
-  	}
+  	},
+    {
+      path:'/register',
+      name: 'register',
+      component: register
+    }
 ]
 
 

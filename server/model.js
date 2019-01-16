@@ -5,7 +5,6 @@ db.then(() => {
   console.log('Connected correctly to MongoDB')
 }).catch(res => {
 	console.log('failed to connect to MongoDB')
-	console.log('====')
 	console.log(res)
 })
 

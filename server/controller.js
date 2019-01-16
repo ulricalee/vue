@@ -1,16 +1,21 @@
 const path = require('path')
 const fs = require('fs')
 const crypto = require('crypto')
+
 const Store = require('./store')
 const model = require('./model')
-const passport = require('./passport')
+//验证码
+const captcha = require('svg-captcha')
+
+
+
+
 
 let store = new Store()
 
 
 module.exports = function(router){
-
-
+	
 	// router.get('/xixi/*', (ctx, next) => {
 	//   ctx.body = ctx.isAuthenticated()
 	//   //  if(ctx.isAuthenticated()) {
@@ -50,44 +55,89 @@ module.exports = function(router){
 	//       return ctx.login({id: 1, username: 'admin', password: '123456'})
 	//     })(ctx)
 	// })
-	router.get('/api/*', async (ctx,next) => {
-
-		if(ctx.session.user && ctx.session.user === ctx.cookies.get('user')){
-			await next()
-		}else{
-			ctx.redirect(router.url('index'))
-			// ctx.body = {
-			// 	code:10000,
-	  // 			result:'error',
-	  // 			msg:'Account not landed.'
-	  // 		}
-		}
-
-	})
+	
 
 
 	//app index 首页
 	router.get('index', '/index', async ctx => {
+		let a = ctx.cookies.get('account')
+		console.log('@@@@'+a)
+		// ctx.cookies.set('user', 'lyc', {
+  // 			domain:'localhost',
+  // 			maxAge:1000*60*60*24,//24小时
+  // 			expires:new Date().getTime()+1000*60*60*24,
+  // 			httpOnly:true,
+  // 			overwrite:false
+  // 		})
 		ctx.response.type = 'text/html; charset=UTF-8'
 	  	ctx.body = fs.createReadStream('../build/index.html')
 		
 	})
-	//app detail 首页
+	// //app detail 首页
 	router.get('detail', '/detail', async ctx => {
 		ctx.response.type = 'text/html; charset=UTF-8'
 	  	ctx.body = fs.createReadStream('../build/detail.html')
 		
 	})
 
+	router.get('/api/*', async (ctx,next) => {
+		let _clientCookie = ctx.cookies.get('account')
+		let _errObj = {
+  			result:'error',
+  			code:'B0001',
+  			msg:'Account not logged in.'
+  		}
+  		console.log('###'+_clientCookie)
+  		console.log('&&&',await store.get('account'))
 
+		if(_clientCookie){
+			let _redisAccount = await store.get('account')
+			if(_clientCookie === _redisAccount){
+				await next()
+			}else{
+				ctx.body = _errObj
+			}
+		}else{
+			ctx.body = _errObj
+		}
+	})
+
+	//验证码
+	router.get('/act/captcha', async ctx => {
+		console.log('~~~~'+ctx.cookies.get('user'))
+		const cap = captcha.createMathExpr()
+		store.set(cap.text,{
+			sid : 'captcha'
+		})
+		// let _redis = await store.get('captcha') 
+		// console.log('-===-'+_redis+'-]===-')
+		// ctx.session.captcha = cap.text
+		// console.log(ctx.session.captcha)
+		// console.log(JSON.stringify(ctx.session))
+
+		// ctx.cookies.set('user', ctx.session.captcha,{
+  // 			domain:'10.2.99.156',
+  // 			maxAge:1000*60,
+  // 			expires:new Date,
+  // 			httpOnly:false,
+  // 			overwrite:false
+  // 		})
+		// ctx.response.type = 'image/svg+xml'
+		ctx.body = cap.data
+	})
+
+	//登录、注册
 	router.get('/act/aboutUser', async ctx => {
 
 		let _query = ctx.query,
 			_type = _query.utype,
 			_account = _query.account,
 			_password = _query.password,
+			_captcha = _query.captcha,
 			_existedAccount = 0 //是否存在用户 1:存在 0:不存在
-
+		console.log('=='+_captcha +'==')
+		let _redis = await store.get('captcha') 
+		console.log('--'+_redis+'--')
 		if(	!_type || !_account || !_password ){
 			ctx.body = {
 	  			result:'error',
@@ -126,14 +176,18 @@ module.exports = function(router){
 				  			code:'A0000',
 				  			msg:'Login successfully.'
 				  		}
-				  		ctx.session.user = _account
-				  		ctx.cookies.set('user', _account, {
-				  			domain:'10.2.99.156',
+				  		store.set(_account,{
+							sid : 'account'
+						})
+				  		// ctx.session.user = _account
+				  		ctx.cookies.set('account', _account, {
+				  			domain:'cc.com',
 				  			maxAge:1000*60*60*24,//24小时
-				  			expires:new Date,
-				  			httpOnly:false,
+				  			expires:new Date().getTime()+1000*60*60*24,
+				  			httpOnly:true,
 				  			overwrite:false
 				  		})
+				  		console.log('==============='+ctx.cookies.get('user'))
 					}else{
 						ctx.body = {
 				  			result:'error',
@@ -155,6 +209,15 @@ module.exports = function(router){
 
 				//注册用户
 		  		if(_type === 'register'){
+		  			if(_captcha != ctx.session.captcha){
+		  				ctx.body = {
+				  			result:'error',
+				  			code:'A0003',
+				  			msg:'Captcha error.'
+				  		}
+		  				return
+		  			}
+
 					//对密码进行md5加密 并且 添加随机盐值
 					let _salt = Math.random().toString().slice(2, 5)
 					let _DBpassword = crypto.createHash('md5').update( _password + ':' + _salt ).digest('hex')
@@ -190,11 +253,11 @@ module.exports = function(router){
 	})
 
 
-	router.get('/api/clearsession', async ctx => {
+	router.get('/clearsession', async ctx => {
 		ctx.session.refresh()
 	})
 
-	router.get('/api/setsession', async ctx => {
+	router.get('/setsession', async ctx => {
 
 		ctx.session.user = 'wo shi session'
 
@@ -204,6 +267,7 @@ module.exports = function(router){
 		store.set(_str,{
 			sid : 'xixi'
 		})
+
 
 		ctx.body = _str
 	   //  ctx.response.type = 'text/html; charset=UTF-8'
@@ -224,7 +288,7 @@ module.exports = function(router){
 		// 	ctx.body = '123'
 		// })
 	})
-	router.get('/api/getsession', async ctx => {
+	router.get('/getsession', async ctx => {
 	   //  ctx.response.type = 'text/html; charset=UTF-8'
 	  //ctx.body = JSON.stringify(ctx.session)
 

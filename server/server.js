@@ -6,7 +6,6 @@ const logger = require('koa-logger')
 const staticFile = require('koa-static')
 const session = require('koa-session2')
 const cors = require('koa2-cors')
-
 const Store = require('./store')
 // const passport = require('./passport')
 //const passport = require('koa-passport')
@@ -19,6 +18,16 @@ const main = staticFile('../build')
 
 const app = new Koa
 const router = new Router
+
+
+
+// app.use('*', (req, res, next) => {
+//     console.log('~~~~~~')
+//     console.log(req)
+//     console.log('~~~~~~')
+// 	// proxy.web(req, res, { target: config.target })
+
+// })
 
 //注册controller
 Controller(router)
@@ -56,7 +65,7 @@ app
     .use(router.routes())
     .use(router.allowedMethods())
 
-app.listen(9001,()=>{
+app.listen(80,()=>{
     console.log('web server start')
 })
 

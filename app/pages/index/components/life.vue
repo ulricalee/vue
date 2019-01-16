@@ -4,8 +4,8 @@
 	</div>
 </template>
 <script>
-import Ajax from '@app/api/ajax'
 import axios from 'axios'
+import { PLAY } from '@app/api/domain'
 export default {
 	name: 'life',
 	data(){
@@ -15,14 +15,12 @@ export default {
 	},
 	methods:{
 		req(){
-			axios.get('http://10.2.99.156:9001/act/aboutUser', {
+			axios.get(PLAY, {
 				params: {
-					account: '',
-					password: '',
-					utype:''
+					
 				}
-			}).then(response => {
-				
+			}).then(res => {
+				console.log(res)
 				
 			})
 			.catch(function (error) {
@@ -35,8 +33,3 @@ export default {
 	}
 }
 </script>
-<style scoped>
-body{
-	background:url('../assets/img/logo.png')
-}
-</style>

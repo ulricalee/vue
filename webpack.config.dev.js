@@ -113,6 +113,13 @@ module.exports = {
         port:9000,
         inline:true,
         hot:true,
+        disableHostCheck: true,
+        // proxy: {
+        //     '/act': {
+        //         target: 'cc.com',
+        //         secure: false
+        //     }
+        // }
         // contentBase: path.join(__dirname, appPath.template),
 
        //clientLogLevel: 'warning',
