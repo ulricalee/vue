@@ -2,13 +2,12 @@ const path = require('path')
 const Koa = require('koa')
 const Router = require('koa-router')
 const logger = require('koa-logger')
-// const cookieParser = require('cookie-parser')
 const staticFile = require('koa-static')
 const session = require('koa-session2')
 const cors = require('koa2-cors')
 const Store = require('./store')
-// const passport = require('./passport')
-//const passport = require('koa-passport')
+const proxy = require('koa-proxy2')
+const __production__ = false //false 本地开发
 
 //controller
 const Controller = require('./controller')
@@ -19,15 +18,49 @@ const main = staticFile('../build')
 const app = new Koa
 const router = new Router
 
+app.use(async (ctx,next)=>{
+	//设置响应头
+	ctx.set('Cache-Control','max-age=3600')
+	await next()
+
+	
+	// console.log(ctx.response.type)
+	// ctx.remove('etag')
+	// ctx.etag = etag
+	// ctx.vary = 'etag'
+
+	//
+	// if (ctx.fresh) {
+	//     ctx.status = 304;
+	// }
+	// const etag = ctx.response.get('ETag');
+	// console.log(etag)
+	
+	// console.log(ctx.body)
+	// ctx.status = 20
+	// ctx.set({
+	//   'Etag': etag
+	//   // 'Last-Modified': new Date
+	// });
+
+	// ctx.request.header={
+	// 	'cache-control' : 'no-store'
+	// }
+	
+})
 
 
-// app.use('*', (req, res, next) => {
-//     console.log('~~~~~~')
-//     console.log(req)
-//     console.log('~~~~~~')
-// 	// proxy.web(req, res, { target: config.target })
 
-// })
+!__production__ && app.use(proxy({
+  	proxy_rules: [
+	    {
+		    proxy_location: /index|dist/,
+		    proxy_pass: 'http://localhost:9000',
+		    proxy_micro_service: false,
+		    proxy_merge_mode: false
+	    }
+  	]
+}))
 
 //注册controller
 Controller(router)
@@ -35,21 +68,6 @@ Controller(router)
 //日志
 app.use(logger())
 
-// app.use(async (ctx, next) => {
-//     console.log(`Process ${ctx.request.method} ${ctx.request.url}...`)
-//     await next(1)
-// })
-
-
-
-
-
-
-
-
-
-// app.use(passport.initialize())
-// app.use(passport.session())
 
 app
 	//应用静态文件

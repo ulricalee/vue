@@ -1,5 +1,4 @@
 import '@/static/css/base.css'
-import '@/static/scss/a.scss'
 import './assets/css/a.css'
 
 
@@ -17,7 +16,7 @@ import Button from 'vant/lib/button'
 import Notify from 'vant/lib/notify'
 
 import 'vant/lib/index.css'
-
+console.log('meilidajiao555777700000')
 Vue.use(Cell)
    .use(CellGroup)
    .use(Field)

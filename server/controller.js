@@ -7,27 +7,14 @@ const model = require('./model')
 //验证码
 const captcha = require('svg-captcha')
 
-
-
-
+// const httpProxy = require('http-proxy')
+// const proxy = httpProxy.createProxyServer({})
 
 let store = new Store()
 
 
 module.exports = function(router){
 	
-	// router.get('/xixi/*', (ctx, next) => {
-	//   ctx.body = ctx.isAuthenticated()
-	//   //  if(ctx.isAuthenticated()) {
-	//   //    next()
-	//   //  } else {
-	//   //   ctx.status = 401
-	//   //   ctx.body = {
-	//   //     msg: 'auth fail'
-	//   //   }
-	//   // }
-	// })
-
 	// router.get('/xixi', (ctx, next) => {
 
 
@@ -135,14 +122,11 @@ module.exports = function(router){
 			_password = _query.password,
 			_captcha = _query.captcha,
 			_existedAccount = 0 //是否存在用户 1:存在 0:不存在
-		console.log('=='+_captcha +'==')
-		let _redis = await store.get('captcha') 
-		console.log('--'+_redis+'--')
 		if(	!_type || !_account || !_password ){
 			ctx.body = {
 	  			result:'error',
 	  			code:'A0001',
-	  			msg:`Request parameter missing ${!_type ? 'utype' : !_account ? 'account' : !_password ? 'password' : ''}.`
+	  			msg:`request parameter missing ${!_type ? 'utype' : !_account ? 'account' : !_password ? 'password' : ''}`
 	  		}
 	  		return false
 		}
@@ -159,7 +143,7 @@ module.exports = function(router){
 		  			ctx.body = {
 			  			result:'error',
 			  			code:'A0002',
-			  			msg:'Account already exists.'
+			  			msg:'account already exists'
 			  		}
 		  		}
 		  		//登录用户
@@ -174,7 +158,7 @@ module.exports = function(router){
 						ctx.body = {
 				  			result:'success',
 				  			code:'A0000',
-				  			msg:'Login successfully.'
+				  			msg:'login successfully'
 				  		}
 				  		store.set(_account,{
 							sid : 'account'
@@ -187,12 +171,11 @@ module.exports = function(router){
 				  			httpOnly:true,
 				  			overwrite:false
 				  		})
-				  		console.log('==============='+ctx.cookies.get('user'))
 					}else{
 						ctx.body = {
 				  			result:'error',
 				  			code:'A0001',
-				  			msg:'Account password error.'
+				  			msg:'account password error'
 				  		}
 					}
 
@@ -202,18 +185,20 @@ module.exports = function(router){
 		  	}
 		  		
 		  	
-		}).then((res) => {
+		}).then(async res => {
 
 			//查找数据库user表的所有数据之后
 			if(_existedAccount === 0){
 
 				//注册用户
 		  		if(_type === 'register'){
-		  			if(_captcha != ctx.session.captcha){
+		  			let _redisAccount = await store.get('captcha') 
+		  			console.log( _redisAccount)
+		  			if(_captcha != _redisAccount){
 		  				ctx.body = {
 				  			result:'error',
 				  			code:'A0003',
-				  			msg:'Captcha error.'
+				  			msg:'captcha error'
 				  		}
 		  				return
 		  			}
@@ -231,7 +216,7 @@ module.exports = function(router){
 			  		ctx.body = {
 			  			result:'success',
 			  			code:'A0000',
-			  			msg:'Create account successfully.'
+			  			msg:'create account successfully'
 			  		}
 
 		  		}else{
@@ -239,7 +224,7 @@ module.exports = function(router){
 		  			ctx.body = {
 			  			result:'error',
 			  			code:'A0001',
-			  			msg:'Account does not exist.'
+			  			msg:'account does not exist'
 			  		}
 
 		  		}

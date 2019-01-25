@@ -1,4 +1,4 @@
-const interfaceDomain = '//cc.com'
+const interfaceDomain = '//lyc.com'
 
 
 

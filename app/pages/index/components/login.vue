@@ -1,8 +1,8 @@
 <template>
 	<div class="login">
 		<van-cell-group>
-		  	<van-field v-model="account" placeholder="Account" />
-		  	<van-field type="password" v-model="password" placeholder="Password"/>
+		  	<van-field v-model="account" placeholder="Account" autocomplete="off" />
+		  	<van-field type="password" v-model="password" placeholder="Password" autocomplete="off"/>
 		</van-cell-group>
 		<van-button size="large" class="in" @click="signIn">Sign In</van-button>
 		<p class="alc">New to here? <span @click="goRegister">Create an account</span></p>
@@ -14,9 +14,6 @@ import { LOGIN } from '@app/api/domain'
 import axios from 'axios'
 export default {
 	name: 'login',
-	// compontents:{
-	// 	vanfield
-	// },
 	data(){
 		return {
 			account:'',
@@ -36,11 +33,9 @@ export default {
 			}).then(response => {
 				let _data = response.data
 				if(_data && _data.code === 'A0000'){
-					if(this.utype === 'login'){
-						this.$router.push({ name: 'life'})
-					}
+					this.$router.push({ name: 'life'})
 				}else{
-					this.$notify('Incorrect account or password.')
+					this.$notify('Incorrect account or password')
 				}
 				
 				
@@ -54,6 +49,7 @@ export default {
 		}
 	},
 	created(){
+		console.log('====')
 		console.log('this is login')
 	}
 }

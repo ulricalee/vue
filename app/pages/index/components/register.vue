@@ -3,25 +3,33 @@
 		<van-cell-group>
 			<van-field
 			    v-model="account"
-			    required
 			    clearable
+			    left-icon="contact"
 			    label="Account"
+			    autocomplete="off"
+			    :error-message="accountError"
+			    @focus="clearAccountError"
 			/>
 			<van-field
 				v-model="password"
-				type="password"
+				:type="pwdType"
 				label="Password"
-				required
+				left-icon="setting-o"
 				:icon="eye"
 				@click-icon="changeEye"
+				:error-message="pwdError"
+				autocomplete="off"
+				@focus="clearPwdError"
 			/>
 			<van-field
 			    v-model="code"
-			    required
-			    center
+			    left-icon="aim"
 			    clearable
 			    label="Code"
 			    maxlength="2"
+			    autocomplete="off"
+			    :error-message="captchaError"
+				@focus="clearCodeError"
 			>
 			    <van-button 
 			    	slot="button"
@@ -44,6 +52,11 @@ export default {
 	name: 'register',
 	data(){
 		return {
+			ajaxSwitch:false,
+			accountError:'',
+			captchaError:'',
+			pwdError:'',
+			pwdType:'password',
 			captchaSrc:'',
 			account:'',
 			password:'',
@@ -52,8 +65,18 @@ export default {
 		}
 	},
 	methods:{
+		clearCodeError(){
+			this.captchaError = ''
+		},
+		clearPwdError(){
+			this.pwdError = ''
+		},
+		clearAccountError(){
+			this.accountError = ''
+		},
 		changeEye(){
-			console.log('==')
+			this.pwdType = this.pwdType === 'password' ? 'text' : 'password'
+			this.eye = this.eye === 'closed-eye' ? 'eye-o' : 'closed-eye'
 		},
 		getCode(){
 			axios.get(`${CAPTCHA}?v=${parseInt( Math.random()*1000 )}`).then(res => {
@@ -63,7 +86,28 @@ export default {
 				console.log(error)
 			})
 		},
+		checkForm(){
+			let regxnull = /^\s*$/g
+			if(regxnull.test(this.account)){
+				this.accountError = 'account cannot be empty'
+				return false
+			}else{
+				this.accountError = ''
+			}
+			if(regxnull.test(this.password)){
+				this.pwdError = 'password cannot be empty'
+				return false
+			}else if(this.password.length < 8){
+				this.pwdError = 'at least 8 characters'
+				return false
+			}else{
+				this.pwdError = ''
+			}
+			return true
+		},
 		submitRegister(){
+			if(!this.checkForm() || this.ajaxSwitch) return
+			this.ajaxSwitch = true
 			axios.get(LOGIN, {
 				params: {
 					account: this.account,
@@ -74,23 +118,27 @@ export default {
 			}).then(response => {
 				let _data = response.data
 				let _case = _data && _data.code
-				console.log(_case)
 				switch(_case){
 					case 'A0000' :
-						console.log('succ')
+						this.$notify({
+							message: 'create account successfully',
+						  	duration: 1500,
+						  	background: 'deepskyblue'
+						})
+						setTimeout(()=>{
+							this.$router.push({ name: 'life', params: {}})
+						},1500)
+						break;
+					case 'A0002' :
+						this.accountError = _data.msg
+						this.ajaxSwitch = false
+						break;
+					case 'A0003' :
+						this.captchaError = _data.msg
+						this.ajaxSwitch = false
 						break;
 
 				}
-				// let _data = response.data
-				// if(_data && _data.code === 'A0000'){
-				// 	if(this.utype === 'login'){
-				// 		this.$router.push({ name: 'life'})
-				// 	}
-				// }else{
-				// 	this.$notify('Incorrect account or password.')
-				// }
-				
-				
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -117,10 +165,16 @@ export default {
 		margin-top:25px;
 	}
 	.captcha-btn{
-		width:100px;
+		position:relative;
+		width:80px;
+		height:24px;
 	}
 	.captcha-btn img{
 		width:100%;
 		height:100%;
+	}
+	.register .van-field__button{
+		font-size: 0;
+    	line-height: 1;
 	}
 </style>
