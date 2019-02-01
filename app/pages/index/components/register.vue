@@ -46,7 +46,7 @@
 	</div>
 </template>
 <script>
-import axios from 'axios'
+import { fetchPost, fetchGet } from '@app/api/ajax'
 import { LOGIN, CAPTCHA } from '@app/api/domain'
 export default {
 	name: 'register',
@@ -79,7 +79,15 @@ export default {
 			this.eye = this.eye === 'closed-eye' ? 'eye-o' : 'closed-eye'
 		},
 		getCode(){
-			axios.get(`${CAPTCHA}?v=${parseInt( Math.random()*1000 )}`).then(res => {
+			// fetchPost(LOGIN, {
+			// 	account: this.account,
+			// 	password: this.password,
+			// 	utype:'register',
+			// 	captcha:this.code
+			// })
+			fetchGet(CAPTCHA, {
+				'v' : parseInt( Math.random()*1000)
+			}).then(res => {
 				let _data = res.data
 				this.captchaSrc = 'data:image/svg+xml;base64,' + window.btoa(_data)
 			}).catch(function (error) {
@@ -108,25 +116,28 @@ export default {
 		submitRegister(){
 			if(!this.checkForm() || this.ajaxSwitch) return
 			this.ajaxSwitch = true
-			axios.get(LOGIN, {
-				params: {
-					account: this.account,
-					password: this.password,
-					utype:'register',
-					captcha:this.code
-				}
+			fetchPost(LOGIN, {
+				account: this.account,
+				password: this.password,
+				utype:'register',
+				captcha:this.code
 			}).then(response => {
 				let _data = response.data
 				let _case = _data && _data.code
 				switch(_case){
 					case 'A0000' :
-						this.$notify({
-							message: 'create account successfully',
-						  	duration: 1500,
-						  	background: 'deepskyblue'
+						// this.$notify({
+						// 	message: 'create account successfully',
+						//   	duration: 1500,
+						//   	background: 'deepskyblue'
+						// })
+						this.$toast.success({
+							duration: 1500,       // 持续展示 toast
+							forbidClick: true, // 禁用背景点击
+							message: 'Success'
 						})
 						setTimeout(()=>{
-							this.$router.push({ name: 'life', params: {}})
+							this.$router.push({ name: 'login', params: {}})
 						},1500)
 						break;
 					case 'A0002' :

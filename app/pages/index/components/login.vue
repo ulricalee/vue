@@ -9,9 +9,8 @@
 	</div>
 </template>
 <script>
-import Ajax from '@app/api/ajax'
+import { fetchPost } from '@app/api/ajax'
 import { LOGIN } from '@app/api/domain'
-import axios from 'axios'
 export default {
 	name: 'login',
 	data(){
@@ -24,12 +23,10 @@ export default {
 	},
 	methods:{
 		signIn(){
-			axios.get(LOGIN, {
-				params: {
-					account: this.account,
-					password: this.password,
-					utype:'login'
-				}
+			fetchPost(LOGIN,{
+				account: this.account,
+				password: this.password,
+				utype:'login'
 			}).then(response => {
 				let _data = response.data
 				if(_data && _data.code === 'A0000'){
@@ -44,8 +41,6 @@ export default {
 				}else{
 					this.$notify('Incorrect account or password')
 				}
-				
-				
 			})
 			.catch(function (error) {
 				console.log(error);

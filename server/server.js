@@ -7,6 +7,11 @@ const session = require('koa-session2')
 const cors = require('koa2-cors')
 const Store = require('./store')
 const proxy = require('koa-proxy2')
+const bodyParser = require('koa-bodyparser')
+
+
+
+
 const __production__ = false //false 本地开发
 
 //controller
@@ -68,6 +73,7 @@ Controller(router)
 //日志
 app.use(logger())
 
+app.use(bodyParser())
 
 app
 	//应用静态文件

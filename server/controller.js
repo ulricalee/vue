@@ -99,32 +99,16 @@ module.exports = function(router){
 
 	//验证码
 	router.get('/act/captcha', async ctx => {
-		console.log('~~~~'+ctx.cookies.get('user'))
 		const cap = captcha.createMathExpr()
 		store.set(cap.text,{
 			sid : 'captcha'
 		})
-		// let _redis = await store.get('captcha') 
-		// console.log('-===-'+_redis+'-]===-')
-		// ctx.session.captcha = cap.text
-		// console.log(ctx.session.captcha)
-		// console.log(JSON.stringify(ctx.session))
-
-		// ctx.cookies.set('user', ctx.session.captcha,{
-  // 			domain:'10.2.99.156',
-  // 			maxAge:1000*60,
-  // 			expires:new Date,
-  // 			httpOnly:false,
-  // 			overwrite:false
-  // 		})
-		// ctx.response.type = 'image/svg+xml'
 		ctx.body = cap.data
 	})
 
 	//登录、注册
-	router.get('/act/aboutUser', async ctx => {
-
-		let _query = ctx.query,
+	router.post('/act/aboutUser', async ctx => {
+		let _query = ctx.request.body,
 			_type = _query.utype,
 			_account = _query.account,
 			_password = _query.password,

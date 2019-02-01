@@ -14,14 +14,16 @@ import CellGroup from 'vant/lib/cell-group'
 import Field from 'vant/lib/field'
 import Button from 'vant/lib/button'
 import Notify from 'vant/lib/notify'
+import Toast from 'vant/lib/toast'
 
 import 'vant/lib/index.css'
-console.log('meilidajiao555777700000')
+
 Vue.use(Cell)
    .use(CellGroup)
    .use(Field)
    .use(Button)
    .use(Notify)
+   .use(Toast)
 
 
 Vue.config.productionTip = false
