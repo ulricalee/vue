@@ -3,6 +3,8 @@ const glob = require('glob')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const firstPlugin = require('./webpackplugin/test.js')
+
 
 var App = (function(){
  
@@ -101,7 +103,8 @@ module.exports = {
     plugins:[
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
-        ...App.htmls
+        ...App.htmls,
+        new firstPlugin({options: true})
         // new HtmlWebpackPlugin({
         //         chunks:[ 'index', 'a' ],
         //         template: './app/pages/index/index.html',

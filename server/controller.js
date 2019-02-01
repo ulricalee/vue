@@ -68,22 +68,30 @@ module.exports = function(router){
 	})
 
 	router.get('/api/*', async (ctx,next) => {
-		let _clientCookie = ctx.cookies.get('account')
+		let _clientCookie = ctx.cookies.get('_user')
+
 		let _errObj = {
   			result:'error',
   			code:'B0001',
-  			msg:'Account not logged in.'
+  			msg:'Account not logged in'
   		}
-  		console.log('###'+_clientCookie)
-  		console.log('&&&',await store.get('account'))
+
 
 		if(_clientCookie){
-			let _redisAccount = await store.get('account')
-			if(_clientCookie === _redisAccount){
-				await next()
-			}else{
-				ctx.body = _errObj
-			}
+			await model['users'].findOne({'account': _clientCookie}).then( async doc => {
+				if(doc.password === await store.get('userpwd')){
+					await next()
+				}else{
+					ctx.body = _errObj
+				}
+			})
+			
+			// let _redisAccount = await store.get('account')
+			// if(_clientCookie === _redisAccount){
+			// 	await next()
+			// }else{
+			// 	ctx.body = _errObj
+			// }
 		}else{
 			ctx.body = _errObj
 		}
@@ -160,15 +168,15 @@ module.exports = function(router){
 				  			code:'A0000',
 				  			msg:'login successfully'
 				  		}
-				  		store.set(_account,{
-							sid : 'account'
+				  		store.set(clientPwd,{
+							sid : 'userpwd'
 						})
 				  		// ctx.session.user = _account
-				  		ctx.cookies.set('account', _account, {
-				  			domain:'cc.com',
+				  		ctx.cookies.set('_user', _account, {
+				  			domain:'lyc.com',
 				  			maxAge:1000*60*60*24,//24小时
 				  			expires:new Date().getTime()+1000*60*60*24,
-				  			httpOnly:true,
+				  			httpOnly:false,
 				  			overwrite:false
 				  		})
 					}else{

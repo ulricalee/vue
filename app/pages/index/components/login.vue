@@ -33,7 +33,14 @@ export default {
 			}).then(response => {
 				let _data = response.data
 				if(_data && _data.code === 'A0000'){
-					this.$router.push({ name: 'life'})
+					this.$notify({
+						message: 'login successfully',
+					  	duration: 1500,
+					  	background: 'mediumseagreen'
+					})
+					setTimeout(()=>{
+						this.$router.push({ name: 'life', params: {}})
+					},1500)
 				}else{
 					this.$notify('Incorrect account or password')
 				}
