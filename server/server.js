@@ -8,18 +8,13 @@ const cors = require('koa2-cors')
 const Store = require('./store')
 const proxy = require('koa-proxy2')
 const bodyParser = require('koa-bodyparser')
-
-
-
-
 const __production__ = false //false 本地开发
 
 //controller
 const Controller = require('./controller')
 
 //静态资源路径
-const main = staticFile('../build')
-
+const main = staticFile(path.resolve(__dirname, '../build'))
 const app = new Koa
 const router = new Router
 
@@ -79,7 +74,13 @@ app
 	//应用静态文件
 	.use(main)
 	//跨域
-	.use(cors())
+	.use(cors(
+	    {
+			// origin : tx => {
+			// 	return 'http://localhost:9000'
+			// }
+		}
+	))
 	//session
 	.use(session({
 	  	store:new Store(),

@@ -1,5 +1,6 @@
 const path = require('path')
 const fs = require('fs')
+const gm = require('gm').subClass({imageMagick: true})
 const crypto = require('crypto')
 
 const Store = require('./store')
@@ -42,13 +43,36 @@ module.exports = function(router){
 	//       return ctx.login({id: 1, username: 'admin', password: '123456'})
 	//     })(ctx)
 	// })
+	// 图片
+	router.get('/api/images', async ctx => {
+		let originWidth = 0
+		let date = new Date()
+		let year = date.getFullYear()
+		let month = date.getMonth() + 1 < 10 ? '0' + date.getMonth() + 1 : date.getMonth() + 1
+		let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+		let hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+		let minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+		let second = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+		gm('/Users/yingchaoli/Documents/myself/Test2/static/img/waimai_banner.png')
+		  .size( (err, size) => {
+			originWidth = size.width
+		    console.log(size)
+		  })
+		  .resize('50%')
+		  .write(`/Users/yingchaoli/Documents/myself/Test2/static/img2/${year + '' + month + '' + day + '' + hour + '' + minute + '' + second}.png`, err => {
+			console.log(err)
+			if (!err) console.log('done')
+		  })
+		ctx.body = '456888'
+	})
 	
-
 
 	//app index 首页
 	router.get('index', '/index', async ctx => {
 		let a = ctx.cookies.get('account')
 		console.log('@@@@'+a)
+		console.log(__dirname)
+		console.log(path.resolve(__dirname, '../build/index.html'))
 		// ctx.cookies.set('user', 'lyc', {
   // 			domain:'localhost',
   // 			maxAge:1000*60*60*24,//24小时
@@ -57,13 +81,12 @@ module.exports = function(router){
   // 			overwrite:false
   // 		})
 		ctx.response.type = 'text/html; charset=UTF-8'
-	  	ctx.body = fs.createReadStream('../build/index.html')
-		
+	  	ctx.body = fs.createReadStream(path.resolve(__dirname, '../build/index.html'))
 	})
 	// //app detail 首页
 	router.get('detail', '/detail', async ctx => {
 		ctx.response.type = 'text/html; charset=UTF-8'
-	  	ctx.body = fs.createReadStream('../build/detail.html')
+	  	ctx.body = fs.createReadStream(path.resolve(__dirname, '../build/detail.html'))
 		
 	})
 

@@ -1,10 +1,8 @@
 <template>
 	<div>
-		<h1></h1>
-		<img src="../assets/img/1.png" width="50%" alt="">
-		<p>嘻嘻</p>
-		<!-- <h2>1px</h2>
-		<h3>2px</h3> -->
+		<img width="100%" src="../assets/img/waimai_banner.png" alt="">
+		<img width="100%" src="/static/img2/201907113103202.png" alt="">
+		<p class="ck">我要抽卡</p>
 	</div>
 </template>
 <script>
@@ -13,9 +11,7 @@ import { PLAY } from '@app/api/domain'
 export default {
 	name: 'life',
 	data(){
-		return {
-			
-		}
+		return {}
 	},
 	methods:{
 		req(){
@@ -37,7 +33,47 @@ export default {
 	}
 }
 </script>
-<style>
+<!-- <style lang="scss">
+@function vm($px) {
+	@return ($px / 750) * 100vw
+}
+.ck{
+	width:vm(654);
+	height:vm(90);
+	background:red;
+}
+</style> -->
+<style lang="scss">
+@import url('../assets/css/a.css');
+@import url('../assets/scss/aaa.scss');
+$vm_fontsize: 75;
+$vm_design: 750;
+@function rem($px) {
+    @return ($px / $vm_fontsize ) * 1rem;
+}
+body {
+   	max-width: 540px;
+    min-width: 320px;
+}
+html {
+    font-size: ($vm_fontsize / $vm_design) * 100vw;
+
+    @media screen and (max-width: 320px) {
+        font-size: 42.667px;
+
+    }
+    @media screen and (min-width: 540px) {
+        font-size: 72px;
+    }
+}
+
+.ck{
+	width:rem(654);
+	height:rem(90);
+	background:red;
+}
+</style>
+<!-- <style>
 
 	@media screen and (max-width: 320px){   
 	    html {   font-size:42.667px }
@@ -65,4 +101,4 @@ export default {
 	body{
 
 	}
-</style>
+</style> -->

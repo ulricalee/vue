@@ -36,6 +36,7 @@ var App = (function(){
 
 })()
 
+console.log(path.join(__dirname, 'dist'))
 
 module.exports = {
     mode:'development',
@@ -92,8 +93,12 @@ module.exports = {
                     {
                         loader: 'url-loader',
                         options: {
-                            limit: 10000,
-                            name: '[name]-[hash:5].[ext]'
+                            limit: 10000, // 8kb
+                            name: '[name]-[hash:5].[ext]',
+                            // fallback: 'file-loader',
+                            // publicPath: './dist',
+                            // publicPath: './dist/',
+                            outputPath: './dist/images/'
                         }
                     }
                 ]
@@ -117,13 +122,14 @@ module.exports = {
         inline:true,
         hot:true,
         disableHostCheck: true,
+        // contentBase: __dirname,
         // proxy: {
         //     '/act': {
         //         target: 'cc.com',
         //         secure: false
         //     }
         // }
-        // contentBase: path.join(__dirname, appPath.template),
+        // contentBase: false,
 
        //clientLogLevel: 'warning',
         //historyApiFallback: {
@@ -140,7 +146,7 @@ module.exports = {
         // overlay: config.dev.errorOverlay
         // ? { warnings: false, errors: true }
         // : false,
-        //publicPath: '',
+        // publicPath: './dist',
         //proxy: config.dev.proxyTable,
        // quiet: true, // necessary for FriendlyErrorsPlugin
         // watchOptions: {

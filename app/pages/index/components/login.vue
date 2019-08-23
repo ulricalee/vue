@@ -42,8 +42,9 @@ export default {
 					this.$notify('Incorrect account or password')
 				}
 			})
-			.catch(function (error) {
-				console.log(error);
+			.catch(err => {
+				this.$notify('Network request failed')
+				console.log(err)
 			})
 		},
 		goRegister(){
@@ -53,6 +54,14 @@ export default {
 	created(){
 		console.log('====')
 		console.log('this is login')
+var singleNumber = function(nums) {
+  return nums.reduce((before, now) => {
+	  console.log(before^now)
+	  return before^now
+  })
+};
+singleNumber([1,2,2])
+
 	}
 }
 </script>

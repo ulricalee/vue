@@ -68,20 +68,20 @@ module.exports = {
                 test: /\.vue$/, 
                 use: ['vue-loader']
             },
-            {
-                test: /\.(gif|png|jpeg|jpg|svg)$/,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 10000,
-                            name: '[name]-[hash:5].[ext]'
-                            // publicPath:'@'
-                            // outputPath: 'images/'
-                        }
-                    }
-                ]
-            }
+            // {
+            //     test: /\.(gif|png|jpeg|jpg|svg)$/,
+            //     use: [
+            //         {
+            //             loader: 'url-loader',
+            //             options: {
+            //                 limit: 10000,
+            //                 name: '[name]-[hash:5].[ext]'
+            //                 // publicPath:'@'
+            //                 // outputPath: 'images/'
+            //             }
+            //         }
+            //     ]
+            // }
         ]
     }
 }
