@@ -8,7 +8,7 @@ const cors = require('koa2-cors')
 const Store = require('./store')
 const proxy = require('koa-proxy2')
 const bodyParser = require('koa-bodyparser')
-const __production__ = false //false 本地开发
+const __production__ = false //false为 本地开发
 
 //controller
 const Controller = require('./controller')

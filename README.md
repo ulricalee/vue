@@ -12,5 +12,6 @@
 * Redis 进入redis目录/usr/local/etc 输入 redis-server
 
 ## 本地开发
-* 1. npm run dev
-* 2. nodemon ./server/server.js
+* 1. npm run dev    
+* 2. 本地链接http://localhost:9000/index#/login或http://lyc.com/index#/login
+* 3. nodemon ./server/server.js
